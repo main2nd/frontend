@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SpringBoot-Start 应用</h1>
+            <nav>
+                <ul>
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./register.html">注册</a></li>
+                    <li><a href="./login.html">登录</a></li>
+                    <li><a href="./userInfo.html">个人信息</a></li>
+                    <li><a href="./category.html">分类管理</a></li>
+                    <li><a href="./fileUpload.html">文件上传</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="file-upload">
+                <h2>文件上传</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="file">选择文件：</label>
+                        <input type="file" id="file" name="file" required>
+                        <span class="error-message" id="fileError"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">上传</button>
+                    </div>
+                </form>
+                <div class="message" id="message"></div>
+                <div id="uploadResult">
+                    <!-- 上传结果将显示在这里 -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.getElementById('fileError').textContent = '';
+            document.getElementById('message').textContent = '';
+            document.getElementById('uploadResult').innerHTML = '';
+            
+            // 获取文件
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+            
+            // 前端验证
+            if (!file) {
+                document.getElementById('fileError').textContent = '请选择要上传的文件';
+                return;
+            }
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            // 显示上传中信息
+            document.getElementById('message').textContent = '文件上传中...';
+            document.getElementById('message').className = 'message info';
+            
+            // 调用文件上传API
+            uploadFile(formData)
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('message').textContent = '文件上传成功！';
+                        document.getElementById('message').className = 'message success';
+                        
+                        // 显示上传结果
+                        const uploadResult = document.getElementById('uploadResult');
+                        uploadResult.innerHTML = `
+                            <div class="result-item">
+                                <h3>上传结果</h3>
+                                <p><strong>文件名：</strong>${file.name}</p>
+                                <p><strong>文件大小：</strong>${formatFileSize(file.size)}</p>
+                                <p><strong>上传状态：</strong>成功</p>
+                                <p><strong>文件URL：</strong>${response.data}</p>
+                            </div>
+                        `;
+                    } else {
+                        document.getElementById('message').textContent = '文件上传失败：' + response.message;
+                        document.getElementById('message').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('文件上传失败:', error);
+                    document.getElementById('message').textContent = '文件上传失败，请稍后重试';
+                    document.getElementById('message').className = 'message error';
+                });
+        });
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>

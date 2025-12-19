@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分类管理</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SpringBoot-Start 应用</h1>
+            <nav>
+                <ul>
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./register.html">注册</a></li>
+                    <li><a href="./login.html">登录</a></li>
+                    <li><a href="./userInfo.html">个人信息</a></li>
+                    <li><a href="./category.html">分类管理</a></li>
+                    <li><a href="./fileUpload.html">文件上传</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="add-category">
+                <h2>添加分类</h2>
+                <form id="addCategoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">分类名称：</label>
+                        <input type="text" id="categoryName" name="categoryName" required>
+                        <span class="error-message" id="categoryNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">添加</button>
+                    </div>
+                </form>
+                <div class="message" id="addMessage"></div>
+            </section>
+            
+            <section class="category-list">
+                <h2>分类列表</h2>
+                <div id="categoryTableContainer">
+                    <p>加载中...</p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <!-- 修改分类模态框 -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>修改分类</h2>
+            <form id="updateCategoryForm">
+                <input type="hidden" id="updateCategoryId">
+                <div class="form-group">
+                    <label for="updateCategoryName">分类名称：</label>
+                    <input type="text" id="updateCategoryName" name="categoryName" required>
+                    <span class="error-message" id="updateCategoryNameError"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit">保存修改</button>
+                </div>
+            </form>
+            <div class="message" id="updateMessage"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        // 页面加载时获取分类列表
+        window.addEventListener('load', function() {
+            getCategoryList();
+        });
+        
+        // 获取分类列表
+        function getCategoryList() {
+            getCategories()
+                .then(response => {
+                    if (response.code === 0) {
+                        displayCategoryList(response.data);
+                    } else {
+                        document.getElementById('categoryTableContainer').innerHTML = '<p class="error">获取分类列表失败：' + response.message + '</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('获取分类列表失败:', error);
+                    document.getElementById('categoryTableContainer').innerHTML = '<p class="error">获取分类列表失败，请稍后重试</p>';
+                });
+        }
+        
+        // 显示分类列表
+        function displayCategoryList(categories) {
+            const container = document.getElementById('categoryTableContainer');
+            
+            if (categories.length === 0) {
+                container.innerHTML = '<p>暂无分类数据</p>';
+                return;
+            }
+            
+            let html = `
+                <table class="category-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>分类名称</th>
+                            <th>创建用户ID</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            categories.forEach(category => {
+                html += `
+                    <tr>
+                        <td>${category.id}</td>
+                        <td>${category.categoryName}</td>
+                        <td>${category.createUser || '未知'}</td>
+                        <td>
+                            <button class="btn-edit" onclick="openUpdateModal(${category.id})">修改</button>
+                            <button class="btn-delete" onclick="deleteCategory(${category.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        // 添加分类表单提交
+        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.getElementById('categoryNameError').textContent = '';
+            document.getElementById('addMessage').textContent = '';
+            
+            // 获取表单数据
+            const categoryName = document.getElementById('categoryName').value;
+            
+            // 前端验证
+            if (!categoryName.trim()) {
+                document.getElementById('categoryNameError').textContent = '分类名称不能为空';
+                return;
+            }
+            
+            // 调用添加分类API
+            addCategory({ categoryName })
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('addMessage').textContent = '分类添加成功！';
+                        document.getElementById('addMessage').className = 'message success';
+                        // 清空表单
+                        document.getElementById('addCategoryForm').reset();
+                        // 更新分类列表
+                        getCategoryList();
+                    } else {
+                        document.getElementById('addMessage').textContent = response.message;
+                        document.getElementById('addMessage').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('添加分类失败:', error);
+                    document.getElementById('addMessage').textContent = '添加分类失败，请稍后重试';
+                    document.getElementById('addMessage').className = 'message error';
+                });
+        });
+        
+        // 修改分类相关代码
+        const modal = document.getElementById('updateModal');
+        const span = document.getElementsByClassName("close")[0];
+        
+        // 打开修改模态框
+        function openUpdateModal(id) {
+            // 重置表单
+            document.getElementById('updateCategoryForm').reset();
+            document.getElementById('updateCategoryNameError').textContent = '';
+            document.getElementById('updateMessage').textContent = '';
+            
+            // 获取分类详情
+            getCategoryDetail(id)
+                .then(response => {
+                    if (response.code === 0) {
+                        const category = response.data;
+                        document.getElementById('updateCategoryId').value = category.id;
+                        document.getElementById('updateCategoryName').value = category.categoryName;
+                        // 显示模态框
+                        modal.style.display = "block";
+                    } else {
+                        alert('获取分类详情失败：' + response.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('获取分类详情失败:', error);
+                    alert('获取分类详情失败，请稍后重试');
+                });
+        }
+        
+        // 关闭模态框
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // 点击模态框外部关闭模态框
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        // 修改分类表单提交
+        document.getElementById('updateCategoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.getElementById('updateCategoryNameError').textContent = '';
+            document.getElementById('updateMessage').textContent = '';
+            
+            // 获取表单数据
+            const id = document.getElementById('updateCategoryId').value;
+            const categoryName = document.getElementById('updateCategoryName').value;
+            
+            // 前端验证
+            if (!categoryName.trim()) {
+                document.getElementById('updateCategoryNameError').textContent = '分类名称不能为空';
+                return;
+            }
+            
+            // 调用修改分类API
+            updateCategory({ id: parseInt(id), categoryName })
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('updateMessage').textContent = '分类修改成功！';
+                        document.getElementById('updateMessage').className = 'message success';
+                        // 关闭模态框
+                        modal.style.display = "none";
+                        // 更新分类列表
+                        getCategoryList();
+                    } else {
+                        document.getElementById('updateMessage').textContent = response.message;
+                        document.getElementById('updateMessage').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('修改分类失败:', error);
+                    document.getElementById('updateMessage').textContent = '修改分类失败，请稍后重试';
+                    document.getElementById('updateMessage').className = 'message error';
+                });
+        });
+        
+        // 删除分类
+        function deleteCategory(id) {
+            if (confirm('确定要删除这个分类吗？')) {
+                deleteCategoryById(id)
+                    .then(response => {
+                        if (response.code === 0) {
+                            alert('分类删除成功！');
+                            // 更新分类列表
+                            getCategoryList();
+                        } else {
+                            alert('删除分类失败：' + response.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('删除分类失败:', error);
+                        alert('删除分类失败，请稍后重试');
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

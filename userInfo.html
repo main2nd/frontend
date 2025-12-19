@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SpringBoot-Start 应用</h1>
+            <nav>
+                <ul>
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./register.html">注册</a></li>
+                    <li><a href="./login.html">登录</a></li>
+                    <li><a href="./userInfo.html">个人信息</a></li>
+                    <li><a href="./category.html">分类管理</a></li>
+                    <li><a href="./fileUpload.html">文件上传</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="user-info">
+                <h2>个人信息</h2>
+                <div id="userInfoDisplay">
+                    <p>加载中...</p>
+                </div>
+            </section>
+            
+            <section class="update-info">
+                <h2>修改个人信息</h2>
+                <form id="updateInfoForm">
+                    <div class="form-group">
+                        <label for="updateAccountName">用户名：</label>
+                        <input type="text" id="updateAccountName" name="accountName" required minlength="3" maxlength="16">
+                        <span class="error-message" id="updateAccountNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateMoney">余额：</label>
+                        <input type="number" id="updateMoney" name="money" min="0">
+                        <span class="error-message" id="updateMoneyError"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">保存修改</button>
+                    </div>
+                </form>
+                <div class="message" id="updateMessage"></div>
+            </section>
+            
+            <section class="update-pwd">
+                <h2>修改密码</h2>
+                <form id="updatePwdForm">
+                    <div class="form-group">
+                        <label for="old_pwd">原密码：</label>
+                        <input type="password" id="old_pwd" name="old_pwd" required minlength="6" maxlength="15">
+                        <span class="error-message" id="old_pwdError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_pwd">新密码：</label>
+                        <input type="password" id="new_pwd" name="new_pwd" required minlength="6" maxlength="15">
+                        <span class="error-message" id="new_pwdError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="re_pwd">确认新密码：</label>
+                        <input type="password" id="re_pwd" name="re_pwd" required minlength="6" maxlength="15">
+                        <span class="error-message" id="re_pwdError"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">修改密码</button>
+                    </div>
+                </form>
+                <div class="message" id="pwdMessage"></div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        // 页面加载时获取用户信息
+        window.addEventListener('load', function() {
+            getUserInfo();
+        });
+        
+        // 获取用户信息
+        function getUserInfo() {
+            userInfo()
+                .then(response => {
+                    if (response.code === 0) {
+                        const user = response.data;
+                        displayUserInfo(user);
+                        // 填充修改表单
+                        document.getElementById('updateAccountName').value = user.accountName;
+                        document.getElementById('updateMoney').value = user.money || 0;
+                    } else {
+                        document.getElementById('userInfoDisplay').innerHTML = '<p class="error">获取用户信息失败：' + response.message + '</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('获取用户信息失败:', error);
+                    document.getElementById('userInfoDisplay').innerHTML = '<p class="error">获取用户信息失败，请稍后重试</p>';
+                });
+        }
+        
+        // 显示用户信息
+        function displayUserInfo(user) {
+            const userInfoDisplay = document.getElementById('userInfoDisplay');
+            userInfoDisplay.innerHTML = `
+                <div class="info-item">
+                    <span class="label">用户ID：</span>
+                    <span class="value">${user.id}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">用户名：</span>
+                    <span class="value">${user.accountName}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">余额：</span>
+                    <span class="value">${user.money || 0}</span>
+                </div>
+            `;
+        }
+        
+        // 修改个人信息表单提交
+        document.getElementById('updateInfoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.querySelectorAll('#updateInfoForm .error-message').forEach(el => el.textContent = '');
+            document.getElementById('updateMessage').textContent = '';
+            
+            // 获取表单数据
+            const accountName = document.getElementById('updateAccountName').value;
+            const money = document.getElementById('updateMoney').value;
+            
+            // 前端验证
+            let isValid = true;
+            
+            if (!/^\S{3,16}$/.test(accountName)) {
+                document.getElementById('updateAccountNameError').textContent = '用户名必须是3-16个非空白字符';
+                isValid = false;
+            }
+            
+            if (money && isNaN(money)) {
+                document.getElementById('updateMoneyError').textContent = '余额必须是数字';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // 调用更新API
+            updateUserInfo({ accountName, money: money ? parseInt(money) : null })
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('updateMessage').textContent = '个人信息修改成功！';
+                        document.getElementById('updateMessage').className = 'message success';
+                        // 更新显示的用户信息
+                        getUserInfo();
+                    } else {
+                        document.getElementById('updateMessage').textContent = response.message;
+                        document.getElementById('updateMessage').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('修改个人信息失败:', error);
+                    document.getElementById('updateMessage').textContent = '修改个人信息失败，请稍后重试';
+                    document.getElementById('updateMessage').className = 'message error';
+                });
+        });
+        
+        // 修改密码表单提交
+        document.getElementById('updatePwdForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.querySelectorAll('#updatePwdForm .error-message').forEach(el => el.textContent = '');
+            document.getElementById('pwdMessage').textContent = '';
+            
+            // 获取表单数据
+            const old_pwd = document.getElementById('old_pwd').value;
+            const new_pwd = document.getElementById('new_pwd').value;
+            const re_pwd = document.getElementById('re_pwd').value;
+            
+            // 前端验证
+            let isValid = true;
+            
+            if (!/^\S{6,15}$/.test(old_pwd)) {
+                document.getElementById('old_pwdError').textContent = '原密码必须是6-15个非空白字符';
+                isValid = false;
+            }
+            
+            if (!/^\S{6,15}$/.test(new_pwd)) {
+                document.getElementById('new_pwdError').textContent = '新密码必须是6-15个非空白字符';
+                isValid = false;
+            }
+            
+            if (new_pwd !== re_pwd) {
+                document.getElementById('re_pwdError').textContent = '两次输入的新密码不一致';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // 调用修改密码API
+            updatePassword({ old_pwd, new_pwd, re_pwd })
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('pwdMessage').textContent = '密码修改成功，请重新登录！';
+                        document.getElementById('pwdMessage').className = 'message success';
+                        // 清除本地存储的token
+                        localStorage.removeItem('token');
+                        // 3秒后跳转到登录页面
+                        setTimeout(() => {
+                            window.location.href = './login.html';
+                        }, 3000);
+                    } else {
+                        document.getElementById('pwdMessage').textContent = response.message;
+                        document.getElementById('pwdMessage').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('修改密码失败:', error);
+                    document.getElementById('pwdMessage').textContent = '修改密码失败，请稍后重试';
+                    document.getElementById('pwdMessage').className = 'message error';
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SpringBoot-Start 应用</h1>
+            <nav>
+                <ul>
+                    <li><a href="./index.html">首页</a></li>
+                    <li><a href="./register.html">注册</a></li>
+                    <li><a href="./login.html">登录</a></li>
+                    <li><a href="./userInfo.html">个人信息</a></li>
+                    <li><a href="./category.html">分类管理</a></li>
+                    <li><a href="./fileUpload.html">文件上传</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <main>
+            <section class="register-form">
+                <h2>用户注册</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="accountName">用户名：</label>
+                        <input type="text" id="accountName" name="accountName" required minlength="3" maxlength="16" placeholder="请输入3-16个字符">
+                        <span class="error-message" id="accountNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码：</label>
+                        <input type="password" id="password" name="password" required minlength="6" maxlength="15" placeholder="请输入6-15个字符">
+                        <span class="error-message" id="passwordError"></span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">注册</button>
+                    </div>
+                </form>
+                <div class="message" id="message"></div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
+        </footer>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/api.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 重置错误信息
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.getElementById('message').textContent = '';
+            
+            // 获取表单数据
+            const accountName = document.getElementById('accountName').value;
+            const password = document.getElementById('password').value;
+            
+            // 前端验证
+            let isValid = true;
+            
+            if (!/^\S{3,16}$/.test(accountName)) {
+                document.getElementById('accountNameError').textContent = '用户名必须是3-16个非空白字符';
+                isValid = false;
+            }
+            
+            if (!/^\S{6,15}$/.test(password)) {
+                document.getElementById('passwordError').textContent = '密码必须是6-15个非空白字符';
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                return;
+            }
+            
+            // 调用注册API
+            register(accountName, password)
+                .then(response => {
+                    if (response.code === 0) {
+                        document.getElementById('message').textContent = '注册成功！';
+                        document.getElementById('message').className = 'message success';
+                        // 3秒后跳转到登录页面
+                        setTimeout(() => {
+                            window.location.href = './login.html';
+                        }, 3000);
+                    } else {
+                        document.getElementById('message').textContent = response.message;
+                        document.getElementById('message').className = 'message error';
+                    }
+                })
+                .catch(error => {
+                    console.error('注册失败:', error);
+                    document.getElementById('message').textContent = '注册失败，请稍后重试';
+                    document.getElementById('message').className = 'message error';
+                });
+        });
+    </script>
+</body>
+</html>
