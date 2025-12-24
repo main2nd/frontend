@@ -3,283 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>分类管理</title>
+    <title>分类管理 - SB-Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SpringBoot-Start 应用</h1>
-            <nav>
-                <ul>
-                    <li><a href="./index.html">首页</a></li>
-                    <li><a href="./register.html">注册</a></li>
-                    <li><a href="./login.html">登录</a></li>
-                    <li><a href="./userInfo.html">个人信息</a></li>
-                    <li><a href="./category.html">分类管理</a></li>
-                    <li><a href="./fileUpload.html">文件上传</a></li>
-                </ul>
+<body class="bg-slate-950 text-slate-200">
+    <div class="flex h-screen overflow-hidden relative">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 glass-effect border-r border-slate-800 flex-shrink-0 hidden md:flex flex-col z-20">
+            <div class="p-6">
+                <div class="flex items-center gap-2 text-indigo-400 font-bold text-xl">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                    <span class="gradient-text">SB-Start</span>
+                </div>
+            </div>
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+                <a href="./index.html" class="sidebar-link hover:bg-slate-800/50">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    <span>控制面板</span>
+                </a>
+                <a href="./category.html" class="sidebar-link active !text-indigo-400 !bg-indigo-500/10 border border-indigo-500/20">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i>
+                    <span>分类管理</span>
+                </a>
+                <a href="./fileUpload.html" class="sidebar-link hover:bg-slate-800/50">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 mr-3"></i>
+                    <span>文件上传</span>
+                </a>
+                <div class="pt-6 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider px-4">
+                    账户设置
+                </div>
+                <a href="./userInfo.html" class="sidebar-link hover:bg-slate-800/50">
+                    <i data-lucide="user" class="w-5 h-5 mr-3"></i>
+                    <span>个人信息</span>
+                </a>
+                <a href="./login.html" class="sidebar-link text-red-400 hover:bg-red-500/10 mt-4">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
+                    <span>退出登录</span>
+                </a>
             </nav>
-        </header>
-        
-        <main>
-            <section class="add-category">
-                <h2>添加分类</h2>
-                <form id="addCategoryForm">
-                    <div class="form-group">
-                        <label for="categoryName">分类名称：</label>
-                        <input type="text" id="categoryName" name="categoryName" required>
-                        <span class="error-message" id="categoryNameError"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit">添加</button>
-                    </div>
-                </form>
-                <div class="message" id="addMessage"></div>
-            </section>
-            
-            <section class="category-list">
-                <h2>分类列表</h2>
-                <div id="categoryTableContainer">
-                    <p>加载中...</p>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+            <!-- Header -->
+            <header class="h-16 glass-effect border-b border-slate-800 flex items-center justify-between px-8 flex-shrink-0">
+                <h2 class="text-lg font-semibold gradient-text">分类管理</h2>
+                <div class="flex items-center gap-4">
+                    <button id="openAddModal" class="galaxy-button flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        添加分类
+                    </button>
                 </div>
-            </section>
+            </header>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-8 tv-static-bg relative">
+                <div class="animate__animated animate__fadeIn relative z-10">
+                    <!-- Category Table -->
+                    <div class="galaxy-card overflow-hidden !p-0">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-800/50 border-b border-slate-700">
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">分类名称</th>
+                                    <th class="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoryTableBody" class="divide-y divide-slate-800/50">
+                                <!-- Data will be loaded here -->
+                            </tbody>
+                        </table>
+                        <div id="loadingState" class="p-12 flex flex-col items-center justify-center text-slate-500">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-400 mb-4"></div>
+                            <p>正在获取分类数据...</p>
+                        </div>
+                        <div id="emptyState" class="hidden p-12 flex flex-col items-center justify-center text-slate-500">
+                            <i data-lucide="folder-open" class="w-12 h-12 mb-4 opacity-20"></i>
+                            <p>暂无分类数据，点击右上角添加一个吧！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
-        
-        <footer>
-            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
-        </footer>
     </div>
-    
-    <!-- 修改分类模态框 -->
-    <div id="updateModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>修改分类</h2>
-            <form id="updateCategoryForm">
-                <input type="hidden" id="updateCategoryId">
-                <div class="form-group">
-                    <label for="updateCategoryName">分类名称：</label>
-                    <input type="text" id="updateCategoryName" name="categoryName" required>
-                    <span class="error-message" id="updateCategoryNameError"></span>
+
+    <!-- Modal (Add/Edit) -->
+    <div id="categoryModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="galaxy-card w-full max-w-md p-8 transform scale-95 transition-transform duration-300">
+            <div class="flex items-center justify-between mb-8">
+                <h3 id="modalTitle" class="text-2xl font-bold gradient-text">添加新分类</h3>
+                <button id="closeModal" class="text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <form id="categoryForm" class="space-y-6">
+                <input type="hidden" id="categoryId">
+                <div>
+                    <label for="categoryName" class="block text-sm font-medium text-slate-300 mb-2">分类名称</label>
+                    <input type="text" id="categoryName" name="categoryName" required 
+                        class="block w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-slate-200 placeholder-slate-500"
+                        placeholder="请输入分类名称">
                 </div>
-                <div class="form-group">
-                    <button type="submit">保存修改</button>
+                <div class="flex justify-end gap-4 mt-8">
+                    <button type="button" id="cancelModal" class="px-6 py-2.5 rounded-xl font-medium text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                        取消
+                    </button>
+                    <button type="submit" class="galaxy-button px-8">
+                        保存分类
+                    </button>
                 </div>
             </form>
-            <div class="message" id="updateMessage"></div>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        // 页面加载时获取分类列表
-        window.addEventListener('load', function() {
-            getCategoryList();
-        });
-        
-        // 获取分类列表
-        function getCategoryList() {
-            getCategories()
-                .then(response => {
-                    if (response.code === 0) {
-                        displayCategoryList(response.data);
-                    } else {
-                        document.getElementById('categoryTableContainer').innerHTML = '<p class="error">获取分类列表失败：' + response.message + '</p>';
+        initStarfield();
+        lucide.createIcons();
+
+        const modal = document.getElementById('categoryModal');
+        const form = document.getElementById('categoryForm');
+        const tableBody = document.getElementById('categoryTableBody');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+
+        let isEditing = false;
+
+        // Open Modal
+        document.getElementById('openAddModal').onclick = () => {
+            isEditing = false;
+            document.getElementById('modalTitle').textContent = '添加新分类';
+            form.reset();
+            document.getElementById('categoryId').value = '';
+            showModal();
+        };
+
+        // Close Modal
+        const closeModalFunc = () => {
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        };
+        document.getElementById('closeModal').onclick = closeModalFunc;
+        document.getElementById('cancelModal').onclick = closeModalFunc;
+
+        function showModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        }
+
+        // Load Categories
+        async function loadCategories() {
+            loadingState.classList.remove('hidden');
+            tableBody.innerHTML = '';
+            emptyState.classList.add('hidden');
+
+            try {
+                const result = await getCategories();
+                loadingState.classList.add('hidden');
+                
+                if (result.code === 0) {
+                    if (result.data.length === 0) {
+                        emptyState.classList.remove('hidden');
+                        return;
                     }
-                })
-                .catch(error => {
-                    console.error('获取分类列表失败:', error);
-                    document.getElementById('categoryTableContainer').innerHTML = '<p class="error">获取分类列表失败，请稍后重试</p>';
-                });
-        }
-        
-        // 显示分类列表
-        function displayCategoryList(categories) {
-            const container = document.getElementById('categoryTableContainer');
-            
-            if (categories.length === 0) {
-                container.innerHTML = '<p>暂无分类数据</p>';
-                return;
-            }
-            
-            let html = `
-                <table class="category-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>分类名称</th>
-                            <th>创建用户ID</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            categories.forEach(category => {
-                html += `
-                    <tr>
-                        <td>${category.id}</td>
-                        <td>${category.categoryName}</td>
-                        <td>${category.createUser || '未知'}</td>
-                        <td>
-                            <button class="btn-edit" onclick="openUpdateModal(${category.id})">修改</button>
-                            <button class="btn-delete" onclick="deleteCategory(${category.id})">删除</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                    </tbody>
-                </table>
-            `;
-            
-            container.innerHTML = html;
-        }
-        
-        // 添加分类表单提交
-        document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // 重置错误信息
-            document.getElementById('categoryNameError').textContent = '';
-            document.getElementById('addMessage').textContent = '';
-            
-            // 获取表单数据
-            const categoryName = document.getElementById('categoryName').value;
-            
-            // 前端验证
-            if (!categoryName.trim()) {
-                document.getElementById('categoryNameError').textContent = '分类名称不能为空';
-                return;
-            }
-            
-            // 调用添加分类API
-            addCategory({ categoryName })
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('addMessage').textContent = '分类添加成功！';
-                        document.getElementById('addMessage').className = 'message success';
-                        // 清空表单
-                        document.getElementById('addCategoryForm').reset();
-                        // 更新分类列表
-                        getCategoryList();
-                    } else {
-                        document.getElementById('addMessage').textContent = response.message;
-                        document.getElementById('addMessage').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('添加分类失败:', error);
-                    document.getElementById('addMessage').textContent = '添加分类失败，请稍后重试';
-                    document.getElementById('addMessage').className = 'message error';
-                });
-        });
-        
-        // 修改分类相关代码
-        const modal = document.getElementById('updateModal');
-        const span = document.getElementsByClassName("close")[0];
-        
-        // 打开修改模态框
-        function openUpdateModal(id) {
-            // 重置表单
-            document.getElementById('updateCategoryForm').reset();
-            document.getElementById('updateCategoryNameError').textContent = '';
-            document.getElementById('updateMessage').textContent = '';
-            
-            // 获取分类详情
-            getCategoryDetail(id)
-                .then(response => {
-                    if (response.code === 0) {
-                        const category = response.data;
-                        document.getElementById('updateCategoryId').value = category.id;
-                        document.getElementById('updateCategoryName').value = category.categoryName;
-                        // 显示模态框
-                        modal.style.display = "block";
-                    } else {
-                        alert('获取分类详情失败：' + response.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('获取分类详情失败:', error);
-                    alert('获取分类详情失败，请稍后重试');
-                });
-        }
-        
-        // 关闭模态框
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-        
-        // 点击模态框外部关闭模态框
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        
-        // 修改分类表单提交
-        document.getElementById('updateCategoryForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // 重置错误信息
-            document.getElementById('updateCategoryNameError').textContent = '';
-            document.getElementById('updateMessage').textContent = '';
-            
-            // 获取表单数据
-            const id = document.getElementById('updateCategoryId').value;
-            const categoryName = document.getElementById('updateCategoryName').value;
-            
-            // 前端验证
-            if (!categoryName.trim()) {
-                document.getElementById('updateCategoryNameError').textContent = '分类名称不能为空';
-                return;
-            }
-            
-            // 调用修改分类API
-            updateCategory({ id: parseInt(id), categoryName })
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('updateMessage').textContent = '分类修改成功！';
-                        document.getElementById('updateMessage').className = 'message success';
-                        // 关闭模态框
-                        modal.style.display = "none";
-                        // 更新分类列表
-                        getCategoryList();
-                    } else {
-                        document.getElementById('updateMessage').textContent = response.message;
-                        document.getElementById('updateMessage').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('修改分类失败:', error);
-                    document.getElementById('updateMessage').textContent = '修改分类失败，请稍后重试';
-                    document.getElementById('updateMessage').className = 'message error';
-                });
-        });
-        
-        // 删除分类
-        function deleteCategory(id) {
-            if (confirm('确定要删除这个分类吗？')) {
-                deleteCategoryById(id)
-                    .then(response => {
-                        if (response.code === 0) {
-                            alert('分类删除成功！');
-                            // 更新分类列表
-                            getCategoryList();
-                        } else {
-                            alert('删除分类失败：' + response.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('删除分类失败:', error);
-                        alert('删除分类失败，请稍后重试');
+
+                    result.data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-800/50 transition-colors group border-b border-slate-800/50';
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 text-sm text-slate-400 font-mono">${item.id}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-white">${item.categoryName}</td>
+                            <td class="px-6 py-4 text-sm">
+                                <div class="flex gap-3">
+                                    <button onclick="editCategory(${item.id})" class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-indigo-400/10 rounded-lg transition-all">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <button onclick="handleDelete(${item.id})" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        tableBody.appendChild(tr);
                     });
+                    lucide.createIcons();
+                }
+            } catch (error) {
+                loadingState.classList.add('hidden');
+                console.error('Failed to load categories:', error);
             }
         }
+
+        // Add/Update
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                categoryName: document.getElementById('categoryName').value
+            };
+
+            try {
+                let result;
+                if (isEditing) {
+                    data.id = document.getElementById('categoryId').value;
+                    result = await updateCategory(data);
+                } else {
+                    result = await addCategory(data);
+                }
+
+                if (result.code === 0) {
+                    closeModalFunc();
+                    loadCategories();
+                } else {
+                    alert(result.message || '操作失败');
+                }
+            } catch (error) {
+                alert('系统错误，请稍后再试');
+            }
+        };
+
+        // Edit helper
+        window.editCategory = async (id) => {
+            try {
+                const result = await getCategoryDetail(id);
+                if (result.code === 0) {
+                    isEditing = true;
+                    document.getElementById('modalTitle').textContent = '修改分类';
+                    document.getElementById('categoryId').value = result.data.id;
+                    document.getElementById('categoryName').value = result.data.categoryName;
+                    showModal();
+                }
+            } catch (error) {
+                console.error('Fetch detail failed:', error);
+            }
+        };
+
+        // Delete helper
+        window.handleDelete = async (id) => {
+            if (confirm('确定要删除这个分类吗？')) {
+                try {
+                    const result = await deleteCategoryById(id);
+                    if (result.code === 0) {
+                        loadCategories();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    alert('删除失败');
+                }
+            }
+        };
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', loadCategories);
     </script>
 </body>
 </html>

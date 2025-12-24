@@ -3,104 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户注册</title>
+    <title>注册 - SB-Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SpringBoot-Start 应用</h1>
-            <nav>
-                <ul>
-                    <li><a href="./index.html">首页</a></li>
-                    <li><a href="./register.html">注册</a></li>
-                    <li><a href="./login.html">登录</a></li>
-                    <li><a href="./userInfo.html">个人信息</a></li>
-                    <li><a href="./category.html">分类管理</a></li>
-                    <li><a href="./fileUpload.html">文件上传</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="register-form">
-                <h2>用户注册</h2>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="accountName">用户名：</label>
-                        <input type="text" id="accountName" name="accountName" required minlength="3" maxlength="16" placeholder="请输入3-16个字符">
-                        <span class="error-message" id="accountNameError"></span>
+<body class="bg-slate-950 flex items-center justify-center min-h-screen relative overflow-hidden tv-static-bg">
+    <div class="w-full max-w-md p-8 relative z-10">
+        <div class="galaxy-card animate__animated animate__fadeIn">
+            <div class="flex flex-col items-center mb-8">
+                <div class="p-4 bg-purple-500/10 text-purple-400 rounded-2xl mb-4 border border-purple-500/20">
+                    <i data-lucide="user-plus" class="w-10 h-10"></i>
+                </div>
+                <h1 class="text-3xl font-bold gradient-text">创建新账户</h1>
+                <p class="text-slate-400 text-sm mt-2">加入 SB-Start，开启您的管理之旅</p>
+            </div>
+
+            <form id="registerForm" class="space-y-6">
+                <div>
+                    <label for="accountName" class="block text-sm font-medium text-slate-300 mb-2">用户名</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500 group-focus-within:text-purple-400 transition-colors">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="accountName" name="accountName" required 
+                            class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-slate-200 placeholder-slate-500"
+                            placeholder="请输入 3-16 位用户名">
                     </div>
-                    <div class="form-group">
-                        <label for="password">密码：</label>
-                        <input type="password" id="password" name="password" required minlength="6" maxlength="15" placeholder="请输入6-15个字符">
-                        <span class="error-message" id="passwordError"></span>
+                    <span class="text-red-400 text-xs mt-1 hidden" id="accountNameError"></span>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-300 mb-2">密码</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500 group-focus-within:text-purple-400 transition-colors">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </span>
+                        <input type="password" id="password" name="password" required 
+                            class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-slate-200 placeholder-slate-500"
+                            placeholder="请输入 6-15 位密码">
                     </div>
-                    <div class="form-group">
-                        <button type="submit">注册</button>
-                    </div>
-                </form>
-                <div class="message" id="message"></div>
-            </section>
-        </main>
-        
-        <footer>
-            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
-        </footer>
+                    <span class="text-red-400 text-xs mt-1 hidden" id="passwordError"></span>
+                </div>
+
+                <button type="submit" 
+                    class="w-full galaxy-button text-lg py-3 mt-4 !bg-purple-600 hover:!bg-purple-700">
+                    立即注册
+                </button>
+            </form>
+
+            <div id="message" class="mt-6 text-center text-sm hidden"></div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700/50 text-center">
+                <p class="text-slate-400 text-sm">
+                    已经有账号了？ 
+                    <a href="./login.html" class="text-purple-400 font-semibold hover:text-purple-300 transition-colors">立即登录</a>
+                </p>
+            </div>
+        </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        lucide.createIcons();
+        initStarfield();
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // 重置错误信息
-            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-            document.getElementById('message').textContent = '';
+            const messageEl = document.getElementById('message');
+            const accountNameError = document.getElementById('accountNameError');
+            const passwordError = document.getElementById('passwordError');
             
-            // 获取表单数据
+            messageEl.classList.add('hidden');
+            accountNameError.classList.add('hidden');
+            passwordError.classList.add('hidden');
+            
             const accountName = document.getElementById('accountName').value;
             const password = document.getElementById('password').value;
             
-            // 前端验证
             let isValid = true;
-            
             if (!/^\S{3,16}$/.test(accountName)) {
-                document.getElementById('accountNameError').textContent = '用户名必须是3-16个非空白字符';
+                accountNameError.textContent = '用户名必须是3-16个非空白字符';
+                accountNameError.classList.remove('hidden');
                 isValid = false;
             }
-            
             if (!/^\S{6,15}$/.test(password)) {
-                document.getElementById('passwordError').textContent = '密码必须是6-15个非空白字符';
+                passwordError.textContent = '密码必须是6-15个非空白字符';
+                passwordError.classList.remove('hidden');
                 isValid = false;
             }
             
-            if (!isValid) {
-                return;
-            }
+            if (!isValid) return;
             
-            // 调用注册API
-            register(accountName, password)
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('message').textContent = '注册成功！';
-                        document.getElementById('message').className = 'message success';
-                        // 3秒后跳转到登录页面
-                        setTimeout(() => {
-                            window.location.href = './login.html';
-                        }, 3000);
-                    } else {
-                        document.getElementById('message').textContent = response.message;
-                        document.getElementById('message').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('注册失败:', error);
-                    document.getElementById('message').textContent = '注册失败，请稍后重试';
-                    document.getElementById('message').className = 'message error';
-                });
+            try {
+                const response = await register(accountName, password);
+                if (response.code === 0) {
+                    messageEl.textContent = '注册成功！正在跳转至登录页...';
+                    messageEl.className = 'mt-6 text-center text-sm text-emerald-600 font-medium';
+                    messageEl.classList.remove('hidden');
+                    setTimeout(() => {
+                        window.location.href = './login.html';
+                    }, 2000);
+                } else {
+                    messageEl.textContent = response.message || '注册失败，请稍后再试';
+                    messageEl.className = 'mt-6 text-center text-sm text-red-500 font-medium';
+                    messageEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                messageEl.textContent = '网络错误，请稍后再试';
+                messageEl.className = 'mt-6 text-center text-sm text-red-500 font-medium';
+                messageEl.classList.remove('hidden');
+            }
         });
     </script>
 </body>
