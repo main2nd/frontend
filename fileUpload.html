@@ -3,118 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件上传</title>
+    <title>文件上传 - SB-Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SpringBoot-Start 应用</h1>
-            <nav>
-                <ul>
-                    <li><a href="./index.html">首页</a></li>
-                    <li><a href="./register.html">注册</a></li>
-                    <li><a href="./login.html">登录</a></li>
-                    <li><a href="./userInfo.html">个人信息</a></li>
-                    <li><a href="./category.html">分类管理</a></li>
-                    <li><a href="./fileUpload.html">文件上传</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="file-upload">
-                <h2>文件上传</h2>
-                <form id="uploadForm">
-                    <div class="form-group">
-                        <label for="file">选择文件：</label>
-                        <input type="file" id="file" name="file" required>
-                        <span class="error-message" id="fileError"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit">上传</button>
-                    </div>
-                </form>
-                <div class="message" id="message"></div>
-                <div id="uploadResult">
-                    <!-- 上传结果将显示在这里 -->
+<body class="bg-slate-950 text-slate-200 flex h-screen overflow-hidden relative tv-static-bg">
+    <div class="flex h-screen w-full overflow-hidden relative z-10">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 glass-effect border-r border-slate-800 flex-shrink-0 hidden md:flex flex-col">
+            <div class="p-6">
+                <div class="flex items-center gap-2 text-indigo-400 font-bold text-xl">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                    <span class="gradient-text">SB-Start</span>
                 </div>
-            </section>
+            </div>
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+                <a href="./index.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    <span>控制面板</span>
+                </a>
+                <a href="./category.html" class="sidebar-link">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i>
+                    <span>分类管理</span>
+                </a>
+                <a href="./fileUpload.html" class="sidebar-link active">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 mr-3"></i>
+                    <span>文件上传</span>
+                </a>
+                <div class="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider px-4">
+                    账户设置
+                </div>
+                <a href="./userInfo.html" class="sidebar-link">
+                    <i data-lucide="user" class="w-5 h-5 mr-3"></i>
+                    <span>个人信息</span>
+                </a>
+                <a href="./login.html" class="sidebar-link text-red-400 hover:bg-red-500/10">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
+                    <span>退出登录</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 glass-effect border-b border-slate-800 flex items-center px-8 flex-shrink-0">
+                <h2 class="text-lg font-semibold text-slate-200">文件上传</h2>
+            </header>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-2xl mx-auto animate__animated animate__fadeIn">
+                    <div class="galaxy-card p-8">
+                        <div class="flex flex-col items-center mb-8">
+                            <div class="p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl border border-indigo-500/20 mb-4">
+                                <i data-lucide="cloud-upload" class="w-10 h-10"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">上传新文件</h3>
+                            <p class="text-slate-400 text-sm mt-1 text-center">支持图片、文档等多种格式，单个文件最大 10MB</p>
+                        </div>
+
+                        <form id="uploadForm" class="space-y-6">
+                            <div id="drop-zone" class="border-2 border-dashed border-slate-700 rounded-2xl p-12 flex flex-col items-center justify-center hover:border-indigo-500 hover:bg-indigo-500/5 transition-all cursor-pointer group">
+                                <input type="file" id="file" class="hidden">
+                                <i data-lucide="upload" class="w-8 h-8 text-slate-600 group-hover:text-indigo-400 mb-4 transition-colors"></i>
+                                <p class="text-slate-400 font-medium">点击或拖拽文件到这里</p>
+                                <p id="file-name" class="mt-2 text-indigo-400 font-bold hidden"></p>
+                            </div>
+
+                            <button type="submit" class="w-full galaxy-button flex items-center justify-center gap-2">
+                                <i data-lucide="send" class="w-5 h-5"></i>
+                                开始上传
+                            </button>
+                        </form>
+
+                        <div id="message" class="mt-6 text-center text-sm hidden p-4 rounded-xl"></div>
+
+                        <div id="uploadResult" class="mt-8 pt-8 border-t border-slate-800 hidden">
+                            <h4 class="text-sm font-bold text-slate-400 mb-4 uppercase tracking-wider">上传详情</h4>
+                            <div class="bg-slate-900/50 rounded-2xl p-6 border border-slate-800 space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500 text-sm">文件地址</span>
+                                    <a id="result-url" href="#" target="_blank" class="text-indigo-400 text-sm font-medium hover:underline truncate ml-4">https://...</a>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500 text-sm">上传状态</span>
+                                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase">成功</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
-        
-        <footer>
-            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
-        </footer>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        initStarfield();
+        lucide.createIcons();
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file');
+        const fileNameDisplay = document.getElementById('file-name');
+        const form = document.getElementById('uploadForm');
+        const messageEl = document.getElementById('message');
+        const resultArea = document.getElementById('uploadResult');
+        const resultUrl = document.getElementById('result-url');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+                fileNameDisplay.classList.remove('hidden');
+            }
+        };
+
+        // Drag & Drop
+        dropZone.ondragover = (e) => {
             e.preventDefault();
-            
-            // 重置错误信息
-            document.getElementById('fileError').textContent = '';
-            document.getElementById('message').textContent = '';
-            document.getElementById('uploadResult').innerHTML = '';
-            
-            // 获取文件
-            const fileInput = document.getElementById('file');
+            dropZone.classList.add('border-indigo-400', 'bg-indigo-50/50');
+        };
+        dropZone.ondragleave = () => {
+            dropZone.classList.remove('border-indigo-400', 'bg-indigo-50/50');
+        };
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-400', 'bg-indigo-50/50');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                fileNameDisplay.textContent = fileInput.files[0].name;
+                fileNameDisplay.classList.remove('hidden');
+            }
+        };
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
             const file = fileInput.files[0];
-            
-            // 前端验证
             if (!file) {
-                document.getElementById('fileError').textContent = '请选择要上传的文件';
+                alert('请选择一个文件');
                 return;
             }
-            
-            // 创建FormData对象
+
             const formData = new FormData();
             formData.append('file', file);
-            
-            // 显示上传中信息
-            document.getElementById('message').textContent = '文件上传中...';
-            document.getElementById('message').className = 'message info';
-            
-            // 调用文件上传API
-            uploadFile(formData)
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('message').textContent = '文件上传成功！';
-                        document.getElementById('message').className = 'message success';
-                        
-                        // 显示上传结果
-                        const uploadResult = document.getElementById('uploadResult');
-                        uploadResult.innerHTML = `
-                            <div class="result-item">
-                                <h3>上传结果</h3>
-                                <p><strong>文件名：</strong>${file.name}</p>
-                                <p><strong>文件大小：</strong>${formatFileSize(file.size)}</p>
-                                <p><strong>上传状态：</strong>成功</p>
-                                <p><strong>文件URL：</strong>${response.data}</p>
-                            </div>
-                        `;
-                    } else {
-                        document.getElementById('message').textContent = '文件上传失败：' + response.message;
-                        document.getElementById('message').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('文件上传失败:', error);
-                    document.getElementById('message').textContent = '文件上传失败，请稍后重试';
-                    document.getElementById('message').className = 'message error';
-                });
-        });
-        
-        // 格式化文件大小
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
+
+            messageEl.textContent = '正在努力上传中...';
+            messageEl.className = 'mt-6 text-center text-sm p-4 rounded-xl bg-blue-50 text-blue-700 font-medium';
+            messageEl.classList.remove('hidden');
+            resultArea.classList.add('hidden');
+
+            try {
+                const result = await uploadFile(formData);
+                if (result.code === 0) {
+                    messageEl.textContent = '文件上传成功！';
+                    messageEl.className = 'mt-6 text-center text-sm p-4 rounded-xl bg-emerald-50 text-emerald-700 font-medium';
+                    
+                    resultArea.classList.remove('hidden');
+                    resultUrl.href = result.data;
+                    resultUrl.textContent = result.data;
+                } else {
+                    messageEl.textContent = result.message || '上传失败';
+                    messageEl.className = 'mt-6 text-center text-sm p-4 rounded-xl bg-red-50 text-red-700 font-medium';
+                }
+            } catch (error) {
+                messageEl.textContent = '网络请求失败';
+                messageEl.className = 'mt-6 text-center text-sm p-4 rounded-xl bg-red-50 text-red-700 font-medium';
+            }
+        };
     </script>
 </body>
 </html>

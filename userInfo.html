@@ -3,239 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人信息</title>
+    <title>个人信息 - SB-Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SpringBoot-Start 应用</h1>
-            <nav>
-                <ul>
-                    <li><a href="./index.html">首页</a></li>
-                    <li><a href="./register.html">注册</a></li>
-                    <li><a href="./login.html">登录</a></li>
-                    <li><a href="./userInfo.html">个人信息</a></li>
-                    <li><a href="./category.html">分类管理</a></li>
-                    <li><a href="./fileUpload.html">文件上传</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="user-info">
-                <h2>个人信息</h2>
-                <div id="userInfoDisplay">
-                    <p>加载中...</p>
+<body class="bg-slate-950 text-slate-200 flex h-screen overflow-hidden relative tv-static-bg">
+    <div class="flex h-screen w-full overflow-hidden relative z-10">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 glass-effect border-r border-slate-800 flex-shrink-0 hidden md:flex flex-col">
+            <div class="p-6">
+                <div class="flex items-center gap-2 text-indigo-400 font-bold text-xl">
+                    <i data-lucide="rocket" class="w-8 h-8"></i>
+                    <span class="gradient-text">SB-Start</span>
                 </div>
-            </section>
-            
-            <section class="update-info">
-                <h2>修改个人信息</h2>
-                <form id="updateInfoForm">
-                    <div class="form-group">
-                        <label for="updateAccountName">用户名：</label>
-                        <input type="text" id="updateAccountName" name="accountName" required minlength="3" maxlength="16">
-                        <span class="error-message" id="updateAccountNameError"></span>
+            </div>
+            <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
+                <a href="./index.html" class="sidebar-link">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                    <span>控制面板</span>
+                </a>
+                <a href="./category.html" class="sidebar-link">
+                    <i data-lucide="layers" class="w-5 h-5 mr-3"></i>
+                    <span>分类管理</span>
+                </a>
+                <a href="./fileUpload.html" class="sidebar-link">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 mr-3"></i>
+                    <span>文件上传</span>
+                </a>
+                <div class="pt-4 pb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider px-4">
+                    账户设置
+                </div>
+                <a href="./userInfo.html" class="sidebar-link active">
+                    <i data-lucide="user" class="w-5 h-5 mr-3"></i>
+                    <span>个人信息</span>
+                </a>
+                <a href="./login.html" class="sidebar-link text-red-400 hover:bg-red-500/10">
+                    <i data-lucide="log-out" class="w-5 h-5 mr-3"></i>
+                    <span>退出登录</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <!-- Header -->
+            <header class="h-16 glass-effect border-b border-slate-800 flex items-center px-8 flex-shrink-0">
+                <h2 class="text-lg font-semibold text-slate-200">个人中心</h2>
+            </header>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-4xl mx-auto animate__animated animate__fadeIn">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Left Column: Profile Card -->
+                        <div class="md:col-span-1 space-y-6">
+                            <div class="galaxy-card flex flex-col items-center text-center">
+                                <div id="profile-avatar" class="w-24 h-24 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-3xl font-bold border-4 border-slate-800 shadow-xl mb-4">
+                                    U
+                                </div>
+                                <h3 id="profile-account-display" class="text-xl font-bold text-white">用户名</h3>
+                                <p id="profile-id" class="text-slate-400 text-sm">ID: 0</p>
+                                <div class="mt-6 pt-6 border-t border-slate-800 w-full flex justify-center">
+                                    <div>
+                                        <p class="text-xs text-slate-500 uppercase">当前余额</p>
+                                        <p id="profile-money" class="text-lg font-bold text-indigo-400">￥0.00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Settings Forms -->
+                        <div class="md:col-span-2 space-y-8">
+                            <!-- Update Profile -->
+                            <div class="galaxy-card">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                                        <i data-lucide="user-cog" class="w-5 h-5"></i>
+                                    </div>
+                                    <h4 class="text-lg font-bold text-white">修改基本资料</h4>
+                                </div>
+                                <form id="updateInfoForm" class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-400 mb-2">用户名</label>
+                                            <input type="text" id="updateAccountName" class="block w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-400 mb-2">余额</label>
+                                            <input type="number" id="updateMoney" class="block w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="galaxy-button mt-4">
+                                        保存修改
+                                    </button>
+                                </form>
+                                <div id="updateMessage" class="mt-4 text-sm hidden"></div>
+                            </div>
+
+                            <!-- Update Password -->
+                            <div class="galaxy-card">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="p-2 bg-amber-500/10 text-amber-400 rounded-xl border border-amber-500/20">
+                                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                    </div>
+                                    <h4 class="text-lg font-bold text-white">修改登录密码</h4>
+                                </div>
+                                <form id="updatePwdForm" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-400 mb-2">当前密码</label>
+                                        <input type="password" id="old_pwd" required class="block w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-400 mb-2">新密码</label>
+                                            <input type="password" id="new_pwd" required class="block w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-400 mb-2">确认新密码</label>
+                                            <input type="password" id="re_pwd" required class="block w-full px-4 py-2 bg-slate-900/50 border border-slate-700 rounded-xl text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="galaxy-button !bg-slate-700 hover:!bg-slate-600 mt-4">
+                                        重置密码
+                                    </button>
+                                </form>
+                                <div id="pwdMessage" class="mt-4 text-sm hidden"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="updateMoney">余额：</label>
-                        <input type="number" id="updateMoney" name="money" min="0">
-                        <span class="error-message" id="updateMoneyError"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit">保存修改</button>
-                    </div>
-                </form>
-                <div class="message" id="updateMessage"></div>
-            </section>
-            
-            <section class="update-pwd">
-                <h2>修改密码</h2>
-                <form id="updatePwdForm">
-                    <div class="form-group">
-                        <label for="old_pwd">原密码：</label>
-                        <input type="password" id="old_pwd" name="old_pwd" required minlength="6" maxlength="15">
-                        <span class="error-message" id="old_pwdError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="new_pwd">新密码：</label>
-                        <input type="password" id="new_pwd" name="new_pwd" required minlength="6" maxlength="15">
-                        <span class="error-message" id="new_pwdError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="re_pwd">确认新密码：</label>
-                        <input type="password" id="re_pwd" name="re_pwd" required minlength="6" maxlength="15">
-                        <span class="error-message" id="re_pwdError"></span>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit">修改密码</button>
-                    </div>
-                </form>
-                <div class="message" id="pwdMessage"></div>
-            </section>
+                </div>
+            </div>
         </main>
-        
-        <footer>
-            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
-        </footer>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        // 页面加载时获取用户信息
-        window.addEventListener('load', function() {
-            getUserInfo();
-        });
-        
-        // 获取用户信息
-        function getUserInfo() {
-            userInfo()
-                .then(response => {
-                    if (response.code === 0) {
-                        const user = response.data;
-                        displayUserInfo(user);
-                        // 填充修改表单
-                        document.getElementById('updateAccountName').value = user.accountName;
-                        document.getElementById('updateMoney').value = user.money || 0;
-                    } else {
-                        document.getElementById('userInfoDisplay').innerHTML = '<p class="error">获取用户信息失败：' + response.message + '</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error('获取用户信息失败:', error);
-                    document.getElementById('userInfoDisplay').innerHTML = '<p class="error">获取用户信息失败，请稍后重试</p>';
-                });
+        initStarfield();
+        lucide.createIcons();
+
+        let currentUser = null;
+
+        async function loadUserInfo() {
+            try {
+                const result = await userInfo();
+                if (result.code === 0) {
+                    currentUser = result.data;
+                    document.getElementById('profile-account-display').textContent = currentUser.accountName;
+                    document.getElementById('profile-id').textContent = 'ID: ' + currentUser.id;
+                    document.getElementById('profile-avatar').textContent = currentUser.accountName.charAt(0).toUpperCase();
+                    document.getElementById('profile-money').textContent = '￥' + (currentUser.money || 0).toFixed(2);
+                    
+                    document.getElementById('updateAccountName').value = currentUser.accountName || '';
+                    document.getElementById('updateMoney').value = currentUser.money || 0;
+                }
+            } catch (error) {
+                console.error('Failed to load user info:', error);
+            }
         }
-        
-        // 显示用户信息
-        function displayUserInfo(user) {
-            const userInfoDisplay = document.getElementById('userInfoDisplay');
-            userInfoDisplay.innerHTML = `
-                <div class="info-item">
-                    <span class="label">用户ID：</span>
-                    <span class="value">${user.id}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">用户名：</span>
-                    <span class="value">${user.accountName}</span>
-                </div>
-                <div class="info-item">
-                    <span class="label">余额：</span>
-                    <span class="value">${user.money || 0}</span>
-                </div>
-            `;
-        }
-        
-        // 修改个人信息表单提交
-        document.getElementById('updateInfoForm').addEventListener('submit', function(e) {
+
+        // Update Info
+        document.getElementById('updateInfoForm').onsubmit = async (e) => {
             e.preventDefault();
-            
-            // 重置错误信息
-            document.querySelectorAll('#updateInfoForm .error-message').forEach(el => el.textContent = '');
-            document.getElementById('updateMessage').textContent = '';
-            
-            // 获取表单数据
-            const accountName = document.getElementById('updateAccountName').value;
-            const money = document.getElementById('updateMoney').value;
-            
-            // 前端验证
-            let isValid = true;
-            
-            if (!/^\S{3,16}$/.test(accountName)) {
-                document.getElementById('updateAccountNameError').textContent = '用户名必须是3-16个非空白字符';
-                isValid = false;
+            const msgEl = document.getElementById('updateMessage');
+            msgEl.classList.add('hidden');
+
+            const data = {
+                id: currentUser.id,
+                accountName: document.getElementById('updateAccountName').value,
+                money: document.getElementById('updateMoney').value
+            };
+
+            try {
+                const result = await updateUserInfo(data);
+                if (result.code === 0) {
+                    msgEl.textContent = '信息更新成功！';
+                    msgEl.className = 'mt-4 text-sm text-emerald-600 font-medium';
+                    msgEl.classList.remove('hidden');
+                    loadUserInfo();
+                } else {
+                    msgEl.textContent = result.message;
+                    msgEl.className = 'mt-4 text-sm text-red-500 font-medium';
+                    msgEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                msgEl.textContent = '更新失败，请重试';
+                msgEl.className = 'mt-4 text-sm text-red-500 font-medium';
+                msgEl.classList.remove('hidden');
             }
-            
-            if (money && isNaN(money)) {
-                document.getElementById('updateMoneyError').textContent = '余额必须是数字';
-                isValid = false;
-            }
-            
-            if (!isValid) {
-                return;
-            }
-            
-            // 调用更新API
-            updateUserInfo({ accountName, money: money ? parseInt(money) : null })
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('updateMessage').textContent = '个人信息修改成功！';
-                        document.getElementById('updateMessage').className = 'message success';
-                        // 更新显示的用户信息
-                        getUserInfo();
-                    } else {
-                        document.getElementById('updateMessage').textContent = response.message;
-                        document.getElementById('updateMessage').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('修改个人信息失败:', error);
-                    document.getElementById('updateMessage').textContent = '修改个人信息失败，请稍后重试';
-                    document.getElementById('updateMessage').className = 'message error';
-                });
-        });
-        
-        // 修改密码表单提交
-        document.getElementById('updatePwdForm').addEventListener('submit', function(e) {
+        };
+
+        // Update Password
+        document.getElementById('updatePwdForm').onsubmit = async (e) => {
             e.preventDefault();
-            
-            // 重置错误信息
-            document.querySelectorAll('#updatePwdForm .error-message').forEach(el => el.textContent = '');
-            document.getElementById('pwdMessage').textContent = '';
-            
-            // 获取表单数据
+            const msgEl = document.getElementById('pwdMessage');
+            msgEl.classList.add('hidden');
+
             const old_pwd = document.getElementById('old_pwd').value;
             const new_pwd = document.getElementById('new_pwd').value;
             const re_pwd = document.getElementById('re_pwd').value;
-            
-            // 前端验证
-            let isValid = true;
-            
-            if (!/^\S{6,15}$/.test(old_pwd)) {
-                document.getElementById('old_pwdError').textContent = '原密码必须是6-15个非空白字符';
-                isValid = false;
-            }
-            
-            if (!/^\S{6,15}$/.test(new_pwd)) {
-                document.getElementById('new_pwdError').textContent = '新密码必须是6-15个非空白字符';
-                isValid = false;
-            }
-            
+
             if (new_pwd !== re_pwd) {
-                document.getElementById('re_pwdError').textContent = '两次输入的新密码不一致';
-                isValid = false;
-            }
-            
-            if (!isValid) {
+                msgEl.textContent = '两次输入的新密码不一致';
+                msgEl.className = 'mt-4 text-sm text-red-500 font-medium';
+                msgEl.classList.remove('hidden');
                 return;
             }
-            
-            // 调用修改密码API
-            updatePassword({ old_pwd, new_pwd, re_pwd })
-                .then(response => {
-                    if (response.code === 0) {
-                        document.getElementById('pwdMessage').textContent = '密码修改成功，请重新登录！';
-                        document.getElementById('pwdMessage').className = 'message success';
-                        // 清除本地存储的token
+
+            try {
+                const result = await updatePassword({ old_pwd, new_pwd, re_pwd });
+                if (result.code === 0) {
+                    msgEl.textContent = '密码修改成功！请重新登录';
+                    msgEl.className = 'mt-4 text-sm text-emerald-600 font-medium';
+                    msgEl.classList.remove('hidden');
+                    setTimeout(() => {
                         localStorage.removeItem('token');
-                        // 3秒后跳转到登录页面
-                        setTimeout(() => {
-                            window.location.href = './login.html';
-                        }, 3000);
-                    } else {
-                        document.getElementById('pwdMessage').textContent = response.message;
-                        document.getElementById('pwdMessage').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('修改密码失败:', error);
-                    document.getElementById('pwdMessage').textContent = '修改密码失败，请稍后重试';
-                    document.getElementById('pwdMessage').className = 'message error';
-                });
-        });
+                        window.location.href = './login.html';
+                    }, 2000);
+                } else {
+                    msgEl.textContent = result.message;
+                    msgEl.className = 'mt-4 text-sm text-red-500 font-medium';
+                    msgEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                msgEl.textContent = '密码修改失败';
+                msgEl.className = 'mt-4 text-sm text-red-500 font-medium';
+                msgEl.classList.remove('hidden');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', loadUserInfo);
     </script>
 </body>
 </html>

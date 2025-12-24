@@ -188,7 +188,46 @@ function getUrlParam(name) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+// 初始化动态背景效果
+function initStarfield() {
+    const starfield = document.createElement('div');
+    starfield.className = 'starfield-bg';
+    
+    // 创建鼠标跟随光晕
+    const glow = document.createElement('div');
+    glow.className = 'mouse-glow';
+    starfield.appendChild(glow);
+
+    // 创建星星
+    const starCount = 150;
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        const size = Math.random() * 3;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        
+        star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+        star.style.animationDelay = `${Math.random() * 5}s`;
+        
+        starfield.appendChild(star);
+    }
+
+    document.body.appendChild(starfield);
+
+    // 鼠标跟随逻辑
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = `${e.clientX}px`;
+        glow.style.top = `${e.clientY}px`;
+    });
+}
+
 // 导出所有工具函数
+window.initStarfield = initStarfield;
 window.formatDate = formatDate;
 window.getLocalStorage = getLocalStorage;
 window.setLocalStorage = setLocalStorage;

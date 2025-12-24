@@ -3,111 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户登录</title>
+    <title>登录 - SB-Start</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>SpringBoot-Start 应用</h1>
-            <nav>
-                <ul>
-                    <li><a href="./index.html">首页</a></li>
-                    <li><a href="./register.html">注册</a></li>
-                    <li><a href="./login.html">登录</a></li>
-                    <li><a href="./userInfo.html">个人信息</a></li>
-                    <li><a href="./category.html">分类管理</a></li>
-                    <li><a href="./fileUpload.html">文件上传</a></li>
-                </ul>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="login-form">
-                <h2>用户登录</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="accountName">用户名：</label>
-                        <input type="text" id="accountName" name="accountName" required minlength="3" maxlength="16" placeholder="请输入用户名">
-                        <span class="error-message" id="accountNameError"></span>
+<body class="bg-slate-950 flex items-center justify-center min-h-screen relative overflow-hidden tv-static-bg">
+    <div class="w-full max-w-md p-8 relative z-10">
+        <div class="galaxy-card animate__animated animate__fadeIn">
+            <div class="flex flex-col items-center mb-8">
+                <div class="p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl mb-4 border border-indigo-500/20">
+                    <i data-lucide="rocket" class="w-10 h-10"></i>
+                </div>
+                <h1 class="text-3xl font-bold gradient-text">欢迎回来</h1>
+                <p class="text-slate-400 text-sm mt-2">请输入您的账户信息进行登录</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="accountName" class="block text-sm font-medium text-slate-300 mb-2">用户名</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="accountName" name="accountName" required 
+                            class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-slate-200 placeholder-slate-500"
+                            placeholder="请输入用户名">
                     </div>
-                    <div class="form-group">
-                        <label for="password">密码：</label>
-                        <input type="password" id="password" name="password" required minlength="6" maxlength="15" placeholder="请输入密码">
-                        <span class="error-message" id="passwordError"></span>
+                    <span class="text-red-400 text-xs mt-1 hidden" id="accountNameError"></span>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-slate-300 mb-2">密码</label>
+                    <div class="relative group">
+                        <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                            <i data-lucide="lock" class="w-5 h-5"></i>
+                        </span>
+                        <input type="password" id="password" name="password" required 
+                            class="block w-full pl-12 pr-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all text-slate-200 placeholder-slate-500"
+                            placeholder="请输入密码">
                     </div>
-                    <div class="form-group">
-                        <button type="submit">登录</button>
-                    </div>
-                </form>
-                <div class="message" id="message"></div>
-            </section>
-        </main>
-        
-        <footer>
-            <p>&copy; 2025 SpringBoot-Start. All rights reserved.</p>
-        </footer>
+                    <span class="text-red-400 text-xs mt-1 hidden" id="passwordError"></span>
+                </div>
+
+                <button type="submit" 
+                    class="w-full galaxy-button text-lg py-3 mt-4">
+                    登录
+                </button>
+            </form>
+
+            <div id="message" class="mt-6 text-center text-sm hidden"></div>
+
+            <div class="mt-8 pt-6 border-t border-slate-700/50 text-center">
+                <p class="text-slate-400 text-sm">
+                    还没有账号？ 
+                    <a href="./register.html" class="text-indigo-400 font-semibold hover:text-indigo-300 transition-colors">立即注册</a>
+                </p>
+            </div>
+        </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        initStarfield();
+        lucide.createIcons();
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // 重置错误信息
-            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-            document.getElementById('message').textContent = '';
+            const messageEl = document.getElementById('message');
+            const accountNameError = document.getElementById('accountNameError');
+            const passwordError = document.getElementById('passwordError');
             
-            // 获取表单数据
+            // Reset state
+            messageEl.classList.add('hidden');
+            accountNameError.classList.add('hidden');
+            passwordError.classList.add('hidden');
+            
             const accountName = document.getElementById('accountName').value;
             const password = document.getElementById('password').value;
             
-            // 前端验证
             let isValid = true;
-            
             if (!/^\S{3,16}$/.test(accountName)) {
-                document.getElementById('accountNameError').textContent = '用户名必须是3-16个非空白字符';
+                accountNameError.textContent = '用户名必须是3-16个非空白字符';
+                accountNameError.classList.remove('hidden');
                 isValid = false;
             }
-            
             if (!/^\S{6,15}$/.test(password)) {
-                document.getElementById('passwordError').textContent = '密码必须是6-15个非空白字符';
+                passwordError.textContent = '密码必须是6-15个非空白字符';
+                passwordError.classList.remove('hidden');
                 isValid = false;
             }
             
-            if (!isValid) {
-                return;
-            }
+            if (!isValid) return;
             
-            // 调用登录API
-            login(accountName, password)
-                .then(response => {
-                    console.log('登录API响应:', response);
-                    if (response.code === 0) {
-                        // 保存token到本地存储
-                        console.log('登录成功，保存token:', response.data);
-                        localStorage.setItem('token', response.data);
-                        // 验证token是否正确保存
-                        console.log('token保存到localStorage成功:', localStorage.getItem('token'));
-                        document.getElementById('message').textContent = '登录成功！';
-                        document.getElementById('message').className = 'message success';
-                        // 1秒后跳转到个人信息页面
-                        setTimeout(() => {
-                            window.location.href = './userInfo.html';
-                        }, 1000);
-                    } else {
-                        console.error('登录失败:', response.message);
-                        document.getElementById('message').textContent = response.message;
-                        document.getElementById('message').className = 'message error';
-                    }
-                })
-                .catch(error => {
-                    console.error('登录失败:', error);
-                    document.getElementById('message').textContent = '登录失败，请稍后重试';
-                    document.getElementById('message').className = 'message error';
-                });
+            try {
+                const response = await login(accountName, password);
+                if (response.code === 0) {
+                    localStorage.setItem('token', response.data);
+                    messageEl.textContent = '登录成功！正在跳转...';
+                    messageEl.className = 'mt-6 text-center text-sm text-emerald-600 font-medium';
+                    messageEl.classList.remove('hidden');
+                    setTimeout(() => {
+                        window.location.href = './index.html';
+                    }, 1000);
+                } else {
+                    messageEl.textContent = response.message || '登录失败，请检查用户名或密码';
+                    messageEl.className = 'mt-6 text-center text-sm text-red-500 font-medium';
+                    messageEl.classList.remove('hidden');
+                }
+            } catch (error) {
+                messageEl.textContent = '网络错误，请稍后再试';
+                messageEl.className = 'mt-6 text-center text-sm text-red-500 font-medium';
+                messageEl.classList.remove('hidden');
+            }
         });
     </script>
 </body>
